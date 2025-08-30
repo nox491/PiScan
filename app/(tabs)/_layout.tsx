@@ -10,34 +10,49 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#4CAF50',
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
+            height: 90,
+            paddingBottom: 20,
           },
-          default: {},
+          default: {
+            height: 90,
+            paddingBottom: 20,
+          },
         }),
       }}>
       <Tabs.Screen
-        name="index"
+        name="tickets"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Tickets',
+          tabBarButton: HapticTab,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={24} name="ticket.fill" color={focused ? '#4CAF50' : color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Scan',
+          tabBarButton: HapticTab,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={24} name="qrcode.viewfinder" color={focused ? '#4CAF50' : color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarButton: HapticTab,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={24} name="gearshape.fill" color={focused ? '#4CAF50' : color} />,
         }}
       />
     </Tabs>
