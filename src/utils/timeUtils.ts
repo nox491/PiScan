@@ -5,7 +5,7 @@
 /**
  * Convert UTC timestamp to local time
  * @param dateString - UTC timestamp string
- * @returns Date object in local timezone
+ * @returns Date object converted to local timezone
  */
 export function convertUtcToLocalTime(dateString: string): Date {
   if (!dateString) return new Date(dateString);
@@ -14,8 +14,8 @@ export function convertUtcToLocalTime(dateString: string): Date {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return new Date(dateString);
     
-    // Return the date as-is - JavaScript Date automatically handles timezone conversion
-    // when displaying or formatting the date in the user's local timezone
+    // Return the date as-is, since JavaScript Date automatically handles timezone conversion
+    // when displaying with toLocaleString() or when comparing with local times
     return date;
   } catch (error) {
     console.warn('Error converting UTC to local time:', error);
@@ -24,9 +24,9 @@ export function convertUtcToLocalTime(dateString: string): Date {
 }
 
 /**
- * Format date string to readable date and time in local timezone
- * @param dateString - ISO date string (UTC from backend)
- * @returns Formatted date and time string in local timezone (e.g., "Jan 15, 2024 at 2:30 PM")
+ * Format date string to readable date and time
+ * @param dateString - ISO date string (may be UTC)
+ * @returns Formatted date and time string (e.g., "Jan 15, 2024 at 2:30 PM")
  */
 export function formatDateTime(dateString: string): string {
   const date = convertUtcToLocalTime(dateString);
@@ -46,12 +46,41 @@ export function formatDateTime(dateString: string): string {
 }
 
 /**
- * Formats time ago from timestamp (converts UTC to local time)
+ * Formats time ago from timestamp (globally compatible)
+ * Handles timezone differences correctly for all countries and DST
  */
 export function formatTimeAgo(dateString: string): string {
-  const date = convertUtcToLocalTime(dateString);
+  // Parse the UTC date string
+  const utcDate = new Date(dateString);
   const now = new Date();
-  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+  
+  // Get the current timezone offset in milliseconds
+  // This automatically accounts for DST and works globally
+  const timezoneOffsetMs = now.getTimezoneOffset() * 60 * 1000;
+  
+  // Convert UTC date to local time
+  // getTimezoneOffset() returns positive for timezones behind UTC
+  const localDate = new Date(utcDate.getTime() - timezoneOffsetMs);
+  
+  // Calculate difference using local times
+  const diffInMilliseconds = now.getTime() - localDate.getTime();
+  const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+  
+  // Optional debug logging (remove in production)
+  if (__DEV__) {
+    console.log('🕐 Time calculation debug:', {
+      original: dateString,
+      utcDate: utcDate.toISOString(),
+      localDate: localDate.toISOString(),
+      localDateFormatted: localDate.toLocaleString(),
+      now: now.toLocaleString(),
+      diffMs: diffInMilliseconds,
+      diffMinutes: diffInMinutes,
+      diffHours: Math.floor(diffInMinutes / 60),
+      timezoneOffset: now.getTimezoneOffset(),
+      userTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+  }
   
   if (diffInMinutes < 1) return 'Just now';
   if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
