@@ -80,7 +80,7 @@ export const apiRequest = async <T>(
           
           // Otherwise, throw the error
           throw new Error(`HTTP error! status: ${response.status}, message: ${errorResponseData.message || errorResponseData.error || 'Unknown error'}`);
-        } catch (parseError) {
+        } catch {
           // If we can't parse JSON, throw the original error
           throw new Error(`HTTP error! status: ${response.status}`);
         }

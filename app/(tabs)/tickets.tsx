@@ -7,19 +7,19 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { StatusBadge } from '@/src/components/ui/StatusBadge';
 import {
-  BACKGROUND_COLORS,
-  BORDER_RADIUS,
-  BUTTON_STYLES,
-  CARD_STYLES,
-  FLEX,
-  MARGIN,
-  PADDING,
-  SPACING,
-  TEXT_STYLES
+    BACKGROUND_COLORS,
+    BORDER_RADIUS,
+    BUTTON_STYLES,
+    CARD_STYLES,
+    FLEX,
+    MARGIN,
+    PADDING,
+    SPACING,
+    TEXT_STYLES
 } from '@/src/constants/Styles';
 import { useTickets } from '@/src/hooks/useTickets';
 import { StatCardProps } from '@/src/types';
-import { formatDateTime } from '@/src/utils/dataTransform';
+import { formatDateTime } from '@/src/utils/timeUtils';
 
 export default function TicketsScreen() {
   const colorScheme = useColorScheme();
@@ -28,7 +28,6 @@ export default function TicketsScreen() {
   const {
     tickets,
     stats,
-    loading,
     refreshing,
     onRefresh,
     formatTimeAgo,

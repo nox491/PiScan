@@ -32,7 +32,7 @@ export default function SettingsScreen() {
     try {
       await checkBackendHealth();
       setBackendStatus('connected');
-    } catch (error) {
+    } catch {
       setBackendStatus('disconnected');
     }
   };
@@ -155,11 +155,7 @@ export default function SettingsScreen() {
 
       const csvContent = [csvHeaders, ...csvRows].join('\n');
       
-      // Create filename with current date
-      const now = new Date();
-      const dateStr = now.toISOString().split('T')[0];
-      const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
-      const filename = `ticket_history_${dateStr}_${timeStr}.csv`;
+      // Export timestamp reference available in CSV content
 
       // Share the CSV content as text (user can save as .csv)
       await Share.share({

@@ -82,7 +82,7 @@ export default function ScannerScreen() {
 
       {/* Camera View */}
       {state.scanning && !state.validationResult && (
-        <View style={{ height: 400, margin: 20, borderRadius: 20, overflow: 'hidden' }}>
+        <View style={{ height: 400, margin: 20, borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
           <CameraView
             ref={cameraRef}
             style={{ flex: 1 }}
@@ -91,53 +91,63 @@ export default function ScannerScreen() {
             barcodeScannerSettings={{
               barcodeTypes: ['qr', 'code128', 'code39'],
             }}
-          >
-            {/* Scan Area Overlay */}
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <View style={{ width: SCAN_AREA_SIZE, height: SCAN_AREA_SIZE, position: 'relative' }}>
-                <View style={{ position: 'absolute', top: 0, left: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderBottomWidth: 0, borderRightWidth: 0 }} />
-                <View style={{ position: 'absolute', top: 0, right: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderBottomWidth: 0, borderLeftWidth: 0 }} />
-                <View style={{ position: 'absolute', bottom: 0, left: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderTopWidth: 0, borderRightWidth: 0 }} />
-                <View style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderTopWidth: 0, borderLeftWidth: 0 }} />
-              </View>
-              <View style={{ marginTop: 20, alignItems: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3, marginBottom: 4 }}>
-                  {state.validating ? 'Processing ticket...' : 'Position QR code within frame'}
+          />
+          
+          {/* Scan Area Overlay - Positioned absolutely over camera */}
+          <View style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            pointerEvents: 'none' // Allow touches to pass through to camera
+          }}>
+            <View style={{ width: SCAN_AREA_SIZE, height: SCAN_AREA_SIZE, position: 'relative' }}>
+              <View style={{ position: 'absolute', top: 0, left: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderBottomWidth: 0, borderRightWidth: 0 }} />
+              <View style={{ position: 'absolute', top: 0, right: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderBottomWidth: 0, borderLeftWidth: 0 }} />
+              <View style={{ position: 'absolute', bottom: 0, left: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderTopWidth: 0, borderRightWidth: 0 }} />
+              <View style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderColor: '#fff', borderWidth: 3, borderTopWidth: 0, borderLeftWidth: 0 }} />
+            </View>
+            <View style={{ marginTop: 20, alignItems: 'center' }}>
+              <Text style={{ color: '#fff', fontSize: 16, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3, marginBottom: 4 }}>
+                {state.validating ? 'Processing ticket...' : 'Position QR code within frame'}
+              </Text>
+              <Text style={{ color: '#fff', fontSize: 14, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3, opacity: 0.8 }}>
+                {state.validating ? 'Please wait' : 'Hold steady for best results'}
+              </Text>
+            </View>
+          </View>
+          
+          {/* Processing Overlay - Positioned absolutely over camera */}
+          {state.validating && (
+            <View style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              backgroundColor: 'rgba(0, 0, 0, 0.7)', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              pointerEvents: 'none' // Allow touches to pass through to camera
+            }}>
+              <View style={{ 
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                padding: 20, 
+                borderRadius: 12, 
+                alignItems: 'center' 
+              }}>
+                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600', marginBottom: 8 }}>
+                  Processing Ticket
                 </Text>
-                <Text style={{ color: '#fff', fontSize: 14, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3, opacity: 0.8 }}>
-                  {state.validating ? 'Please wait' : 'Hold steady for best results'}
+                <Text style={{ color: '#fff', fontSize: 14, opacity: 0.8, textAlign: 'center' }}>
+                  Camera paused to prevent multiple scans
                 </Text>
               </View>
             </View>
-            
-            {/* Processing Overlay */}
-            {state.validating && (
-              <View style={{ 
-                position: 'absolute', 
-                top: 0, 
-                left: 0, 
-                right: 0, 
-                bottom: 0, 
-                backgroundColor: 'rgba(0, 0, 0, 0.7)', 
-                justifyContent: 'center', 
-                alignItems: 'center' 
-              }}>
-                <View style={{ 
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                  padding: 20, 
-                  borderRadius: 12, 
-                  alignItems: 'center' 
-                }}>
-                  <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600', marginBottom: 8 }}>
-                    Processing Ticket
-                  </Text>
-                  <Text style={{ color: '#fff', fontSize: 14, opacity: 0.8, textAlign: 'center' }}>
-                    Camera paused to prevent multiple scans
-                  </Text>
-                </View>
-              </View>
-            )}
-          </CameraView>
+          )}
         </View>
       )}
 

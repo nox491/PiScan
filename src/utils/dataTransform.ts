@@ -1,5 +1,5 @@
 import { TicketHistoryItem } from '@/src/types';
-import { ValidationUtils } from '@/src/utils/validation';
+import { convertUtcToLocalTime, formatTimeAgo } from './timeUtils';
 
 /**
  * Utility functions for data transformation to eliminate duplication across hooks
@@ -35,7 +35,7 @@ export function transformValidationHistory(backendHistory: any): TicketHistoryIt
       zone: entry.zoneName,
       valid: true, // All tickets in history are valid (used)
       validatedAt: originalTimestamp,
-      validatedAtRelative: ValidationUtils.formatTimeAgo(originalTimestamp), // Calculate relative time from original timestamp
+      validatedAtRelative: formatTimeAgo(originalTimestamp), // Calculate relative time from original timestamp
       validatedBy: entry.validatedBy,
       message: `Validated by ${entry.validatedBy}`
     };
@@ -76,46 +76,3 @@ export function transformValidationStats(backendStats: any) {
   };
 }
 
-
-
-/**
- * Convert UTC timestamp to local time with 6-hour offset
- * @param dateString - UTC timestamp string
- * @returns Date object with 6-hour offset applied
- */
-export function convertUtcToLocalTime(dateString: string): Date {
-  if (!dateString) return new Date(dateString);
-  
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return new Date(dateString);
-    
-    // Apply 6-hour offset to all timestamps
-    return new Date(date.getTime() + (6 * 60 * 60 * 1000));
-  } catch (error) {
-    console.warn('Error converting UTC to local time:', error);
-    return new Date(dateString);
-  }
-}
-
-/**
- * Format date string to readable date and time
- * @param dateString - ISO date string (may be UTC)
- * @returns Formatted date and time string (e.g., "Jan 15, 2024 at 2:30 PM")
- */
-export function formatDateTime(dateString: string): string {
-  const date = convertUtcToLocalTime(dateString);
-  
-  if (isNaN(date.getTime())) {
-    return 'Invalid Date';
-  }
-  
-  return date.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
-}

@@ -25,7 +25,7 @@ export const useTickets = () => {
       const history = await getValidationHistory(50) as any;
       const transformedTickets = transformValidationHistory(history);
       setTickets(transformedTickets);
-    } catch (error) {
+    } catch {
       const errorObj = errorHandler.createError(
         ERROR_CODES.BACKEND_ERROR,
         'Failed to load ticket history'
@@ -39,7 +39,7 @@ export const useTickets = () => {
       const backendStats = await getValidationStats() as any;
       const transformedStats = transformValidationStats(backendStats);
       setStats(transformedStats);
-    } catch (error) {
+    } catch {
       const errorObj = errorHandler.createError(
         ERROR_CODES.BACKEND_ERROR,
         'Failed to load statistics'
