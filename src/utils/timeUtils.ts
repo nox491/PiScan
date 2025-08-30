@@ -3,9 +3,9 @@
  */
 
 /**
- * Convert UTC timestamp to local time with 6-hour offset
+ * Convert UTC timestamp to local time
  * @param dateString - UTC timestamp string
- * @returns Date object with 6-hour offset applied
+ * @returns Date object in local timezone
  */
 export function convertUtcToLocalTime(dateString: string): Date {
   if (!dateString) return new Date(dateString);
@@ -14,8 +14,9 @@ export function convertUtcToLocalTime(dateString: string): Date {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return new Date(dateString);
     
-    // Apply 6-hour offset to all timestamps
-    return new Date(date.getTime() + (6 * 60 * 60 * 1000));
+    // Return the date as-is - JavaScript Date automatically handles timezone conversion
+    // when displaying or formatting the date in the user's local timezone
+    return date;
   } catch (error) {
     console.warn('Error converting UTC to local time:', error);
     return new Date(dateString);
@@ -23,9 +24,9 @@ export function convertUtcToLocalTime(dateString: string): Date {
 }
 
 /**
- * Format date string to readable date and time
- * @param dateString - ISO date string (may be UTC)
- * @returns Formatted date and time string (e.g., "Jan 15, 2024 at 2:30 PM")
+ * Format date string to readable date and time in local timezone
+ * @param dateString - ISO date string (UTC from backend)
+ * @returns Formatted date and time string in local timezone (e.g., "Jan 15, 2024 at 2:30 PM")
  */
 export function formatDateTime(dateString: string): string {
   const date = convertUtcToLocalTime(dateString);
@@ -45,7 +46,7 @@ export function formatDateTime(dateString: string): string {
 }
 
 /**
- * Formats time ago from timestamp (handles UTC conversion)
+ * Formats time ago from timestamp (converts UTC to local time)
  */
 export function formatTimeAgo(dateString: string): string {
   const date = convertUtcToLocalTime(dateString);
